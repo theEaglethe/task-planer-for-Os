@@ -59,19 +59,13 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.GoingP_L = new System.Windows.Forms.Label();
             this.StateP_L = new System.Windows.Forms.Label();
-            this.Processor_TC = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.PID_L = new System.Windows.Forms.Label();
-            this.Memory_L = new System.Windows.Forms.Label();
-            this.Kvant_L = new System.Windows.Forms.Label();
-            this.State_L = new System.Windows.Forms.Label();
-            this.Process_LB = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.TimerOfProcessor = new System.Windows.Forms.Timer(this.components);
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.TimerOfIO = new System.Windows.Forms.Timer(this.components);
             this.AddAll_B = new System.Windows.Forms.Button();
             this.Log = new System.Windows.Forms.RichTextBox();
+            this.Processor_TC = new System.Windows.Forms.TabControl();
             this.Main_TS.SuspendLayout();
             this.Load_GB.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -81,8 +75,6 @@
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.Processor_TC.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -378,77 +370,6 @@
             this.StateP_L.TabIndex = 12;
             this.StateP_L.Text = "Состояние:";
             // 
-            // Processor_TC
-            // 
-            this.Processor_TC.Controls.Add(this.tabPage1);
-            this.Processor_TC.Location = new System.Drawing.Point(0, 54);
-            this.Processor_TC.Name = "Processor_TC";
-            this.Processor_TC.SelectedIndex = 0;
-            this.Processor_TC.Size = new System.Drawing.Size(158, 209);
-            this.Processor_TC.TabIndex = 10;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tabPage1.Controls.Add(this.PID_L);
-            this.tabPage1.Controls.Add(this.Memory_L);
-            this.tabPage1.Controls.Add(this.Kvant_L);
-            this.tabPage1.Controls.Add(this.State_L);
-            this.tabPage1.Controls.Add(this.Process_LB);
-            this.tabPage1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(150, 183);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Процесс";
-            // 
-            // PID_L
-            // 
-            this.PID_L.AutoSize = true;
-            this.PID_L.Location = new System.Drawing.Point(3, 7);
-            this.PID_L.Name = "PID_L";
-            this.PID_L.Size = new System.Drawing.Size(28, 13);
-            this.PID_L.TabIndex = 12;
-            this.PID_L.Text = "PID:";
-            // 
-            // Memory_L
-            // 
-            this.Memory_L.AutoSize = true;
-            this.Memory_L.Location = new System.Drawing.Point(2, 51);
-            this.Memory_L.Name = "Memory_L";
-            this.Memory_L.Size = new System.Drawing.Size(49, 13);
-            this.Memory_L.TabIndex = 12;
-            this.Memory_L.Text = "Память:";
-            // 
-            // Kvant_L
-            // 
-            this.Kvant_L.AutoSize = true;
-            this.Kvant_L.Location = new System.Drawing.Point(3, 35);
-            this.Kvant_L.Name = "Kvant_L";
-            this.Kvant_L.Size = new System.Drawing.Size(40, 13);
-            this.Kvant_L.TabIndex = 12;
-            this.Kvant_L.Text = "Квант:";
-            // 
-            // State_L
-            // 
-            this.State_L.AutoSize = true;
-            this.State_L.Location = new System.Drawing.Point(3, 20);
-            this.State_L.Name = "State_L";
-            this.State_L.Size = new System.Drawing.Size(64, 13);
-            this.State_L.TabIndex = 12;
-            this.State_L.Text = "Состояние:";
-            // 
-            // Process_LB
-            // 
-            this.Process_LB.FormattingEnabled = true;
-            this.Process_LB.Location = new System.Drawing.Point(0, 69);
-            this.Process_LB.Name = "Process_LB";
-            this.Process_LB.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.Process_LB.Size = new System.Drawing.Size(140, 108);
-            this.Process_LB.TabIndex = 10;
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(311, 207);
@@ -500,6 +421,14 @@
             this.Log.TabIndex = 13;
             this.Log.Text = "";
             // 
+            // Processor_TC
+            // 
+            this.Processor_TC.Location = new System.Drawing.Point(0, 54);
+            this.Processor_TC.Name = "Processor_TC";
+            this.Processor_TC.SelectedIndex = 0;
+            this.Processor_TC.Size = new System.Drawing.Size(158, 209);
+            this.Processor_TC.TabIndex = 10;
+            // 
             // Main_F
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -533,9 +462,6 @@
             this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.Processor_TC.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -563,13 +489,6 @@
         private System.Windows.Forms.Label GoingP_L;
         private System.Windows.Forms.Label StateP_L;
         private System.Windows.Forms.Button Go_B;
-        internal System.Windows.Forms.TabControl Processor_TC;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Label PID_L;
-        private System.Windows.Forms.Label Memory_L;
-        private System.Windows.Forms.Label Kvant_L;
-        private System.Windows.Forms.Label State_L;
-        private System.Windows.Forms.ListBox Process_LB;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label IO_L;
@@ -586,6 +505,7 @@
         private System.Windows.Forms.Button AddAll_B;
         private System.Windows.Forms.Timer TimerOfProcessor;
         private System.Windows.Forms.RichTextBox Log;
+        internal System.Windows.Forms.TabControl Processor_TC;
     }
 }
 

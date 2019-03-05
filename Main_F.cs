@@ -34,7 +34,7 @@ namespace Task_1
             /* *
             * Вызов диалогового окна выбора файла для загрузки и проверка результата завершения его работы. 
             * Если окно закрыто с подтверждением загрузки (нажата кнопка OK),
-            * то выполнение действий по чтению файла
+            * то выполнение действий по чтению файла построчно
             * */
             if (Open_D.ShowDialog() == DialogResult.OK)
             {
@@ -202,7 +202,13 @@ namespace Task_1
         /*Остановка работы модели*/
         private void button1_Click(object sender, EventArgs e)
         {
-                
+            if (TimerOfProcessor.Enabled)
+            {
+                button1.Text = "Пауза";
+            }
+            else
+                button1.Text = "Остановить";
+            TimerOfProcessor.Enabled = !TimerOfProcessor.Enabled;
         }
         #endregion
         
@@ -233,7 +239,7 @@ namespace Task_1
             ListBox ProcessLB = new ListBox();
             ProcessLB.FormattingEnabled = true;
             ProcessLB.Name = "Process_LB" + process.descriptor.PID;
-            ProcessLB.SelectionMode = SelectionMode.None;
+            ProcessLB.SelectionMode = SelectionMode.One;
             ProcessLB.Size = new Size(140, 108);
             ProcessLB.DataSource = process.strFileCommands;
             Control[] MassComponnents = new Control[] { PID, state, kvant, memory, ProcessLB };
@@ -254,7 +260,10 @@ namespace Task_1
         }
         /* Рендер 1 тика процессора */
         void Tick(TProcess process)
-        {            
+        {
+            TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;
+            ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
+            listBox.SetSelected(processor.run.context.currentLine, true);
             int currentRUN = process.context.currentRun;    // обращение к начальному  
             int countRUN = process.context.countRun;        // состоянию команды процесса 
             if (currentRUN < countRUN)     // выполнять, пока не истечет время команды ПРОЦЕССОР
@@ -262,18 +271,23 @@ namespace Task_1
                 GoingP_L.Text = "Выполнено: " + currentRUN +
                                 " из " + countRUN.ToString();
                 ++process.context.currentRun; // имитация работы процесса - изменение состояния команды каждый тик
+                
             }
             else // если команда ПРОЦЕССОР отработала, выполняется прерывание
             {
                 GoingP_L.Text = "Выполнено: " + currentRUN +
                                 " из " + countRUN.ToString();
                 ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
-                ToLog("  после команды  ", Color.White); ToLog("ПРОЦЕСОР-" + processor.run.context.countRun.ToString(), Color.Lime);
-                ToLog("  перешел в ГОТОВНОСТЬ.", Color.White);
+                ToLog(",  после выполнения команды  ", Color.White); ToLog("ПРОЦЕСОР-" + processor.run.context.countRun.ToString(), Color.Lime);
+                ToLog(",  перешел в ГОТОВНОСТЬ.", Color.White);
                 processor.run.descriptor.state = TStateProcess.spREADY; // преключение процесса в готовность
                 process.context.currentRun = 0; // обнуление текущего состояния 
                 process.context.countRun = 0;   // команды процесса
-                RefreshCommand();
+                RefreshContext();
+                listBox.ClearSelected();
+                TimerOfProcessor.Stop();
+                processor.stateProcessor = TStateProcessor.sprEMPTY;
+                ManagerOfProc();
             }            
         }
         #endregion
@@ -297,7 +311,7 @@ namespace Task_1
                 }
             }
         }
-        void RefreshCommand()
+        void RefreshContext()
         {
             int line = ++processor.run.context.currentLine;
             processor.run.context.command = processor.run.GetCommand(line);
@@ -305,19 +319,22 @@ namespace Task_1
         }
         /* ПРОЦЕССОР - обработчик текущего процесса за каждый тик*/
         private void TimerOfProcessor_Tick(object sender, EventArgs e)
-        {
-            ++processor.countTick;
+        {            
             /*Обработчик команд*/
             switch (processor.run.context.command)
             {
-                case TCommand.cMEMORY:
-                    ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
-                    ToLog("  занял  ", Color.White); ToLog(processor.run.context.countRun.ToString(), Color.Lime);
-                    ToLog("  памяти.", Color.White);
-                    RefreshCommand();
-                    break;
+                //case TCommand.cMEMORY:
+                //    ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
+                //    ToLog("  занял  ", Color.White); ToLog(processor.run.context.countRun.ToString(), Color.Lime);
+                //    ToLog("  памяти.", Color.White);
+                //    TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;                    
+                //    ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
+                //    listBox.ClearSelected();
+                //    listBox.SetSelected(processor.run.context.currentLine, true);
+                //    RefreshContext();
+                //    break;
                 case TCommand.cPROCESSOR:
-                    processor.run.descriptor.state = TStateProcess.spRUN; // процесс отправляется на ВЫПОЛНЕНИЕ
+                    processor.run.descriptor.state = TStateProcess.spRUN; // процесс отправляется на ВЫПОЛНЕНИЕ                    
                     Tick(processor.run);
                     break;
                 case TCommand.cIO:
@@ -345,8 +362,17 @@ namespace Task_1
                 processor.run = queueOfReady[0];   // инициализируем текущий
                 queueOfReady.RemoveAt(0);           // процесс                
                 processor.stateProcessor = TStateProcessor.sprBUSY; // переключене процессора в рабочий режим
-                DrawPageProc(processor.run);                
+                DrawPageProc(processor.run);
+                TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;
+                Label label = tabPage.Controls["State_L" + processor.run.descriptor.PID] as Label;
+                ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
+                listBox.ClearSelected();                
+                label.Text = processor.run.descriptor.state.GetDescription();
                 StateP_L.Text = "Состояние: " + TStateProcessor.sprBUSY.GetDescription();
+                ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
+                ToLog(" добавлен в ВЫПОЛНЕНИЕ (квант=", Color.White);
+                ToLog(processor.run.descriptor.kvant.ToString(), Color.Lime);
+                ToLog(")", Color.White);
                 TimerOfProcessor.Start();
             }
             else
@@ -393,12 +419,12 @@ namespace Task_1
         TProcess CreateProcess(TBootFile bootFile)
         {
             TProcess process = new TProcess();
-            /*Список команд загрузочного файла*/
+            /*Список команд загрузочного файла - кодовый сегмент*/
             process.strFileCommands = bootFile.comandsOfFile;
             /*Заполнение дескриптора процесса*/
             process.descriptor.name = bootFile.nameOfFile;            
             process.descriptor.PIDcount();
-            process.descriptor.kvant = 2;
+            process.descriptor.kvant = 1;
             process.descriptor.state = TStateProcess.spREADY;            
             process.descriptor.memory = process.GetCountRun(0);
             /*Настроить содержимое контекста нового процесса (инициализация начальными параметрами)*/            
