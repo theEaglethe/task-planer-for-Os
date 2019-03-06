@@ -260,40 +260,78 @@ namespace Task_1
              
         }
         /* Рендер 1 тика процессора */
-        void Tick(TProcess process)
+        void ProcessorTick()
         {
-            //TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;
-            //ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
-            //listBox.SetSelected(processor.run.context.currentLine, true);
-            int currentRUN = process.context.currentRun;    // обращение к начальному  
-            int countRUN = process.context.countRun;        // состоянию команды процесса 
-            if (currentRUN < countRUN)     // выполнять, пока не истечет время команды ПРОЦЕССОР
-            {
-                GoingP_L.Text = "Выполнено: " + currentRUN +
-                                " из " + countRUN.ToString();
-                ++process.context.currentRun; // имитация работы процесса - изменение состояния команды каждый тик
-                
+            /*Для рендера ПРОЦЕССОР */
+            GoingP_L.Text = "Выполнено: " + processor.run.context.currentRun +
+                                " из " + processor.run.context.countRun.ToString();
+            /* Для рендера ЛОГА */
+            ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
+            ToLog(",  после выполнения команды  ", Color.White); ToLog("ПРОЦЕСОР-" + processor.run.context.countRun.ToString(), Color.Lime);
+            ToLog(",  перешел в ГОТОВНОСТЬ.", Color.White);
+            /* Для рендора ПРОЦЕСС */
+            TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;
+            ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
+            listBox.SetSelected(processor.run.context.currentLine, true);
+            //listBox.ClearSelected();
+            Label label = tabPage.Controls["State_L" + processor.run.descriptor.PID] as Label;
+            label.Text = "Состояние: " + processor.run.descriptor.state.GetDescription();
+        }
+        void MemoryTick()
+        {
+            /* Для рендера ЛОГА */
+            ToLog("Высвобождение ");
+            ToLog(processor.run.descriptor.memory.ToString() + " байт", Color.Lime);
+            ToLog(" для процесса ", Color.White);
+            ToLog(processor.run.descriptor.name, Color.Lime);
+            /* Для рендера ПРОЦЕСС */
+            TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;            
+            ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
+            listBox.ClearSelected();
+            listBox.SetSelected(0, true);            
+        }
+        void EndTick()
+        {
+            GoingP_L.Text = "Выполнено: - " + " из -";
+            ToLog(""); ToLog(processor.run.descriptor.name, Color.Lime);
+            ToLog(" выполнился окончательно и был уничтожен.", Color.White);
+            //listBox.ClearSelected();
+            //listBox.SetSelected(processor.run.context.currentLine, true);                           
+            StateP_L.Text = "Состояние: " + processor.stateProcessor.GetDescription();
+        }
+        void MoveToRun()
+        {            
+            DrawPageProc(processor.run);        // отрисовка вкладки            
+            TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;            
+            /* Рендер ЛОГА */
+            ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
+            ToLog(" добавлен в ВЫПОЛНЕНИЕ (квант=", Color.White);
+            ToLog(processor.run.descriptor.kvant.ToString(), Color.Lime);
+            ToLog(")", Color.White);
+            /* Рендер ПРОЦЕССОР - если следуюущая команда ПРОЦЕССОР, то устанавливает начальные значения */
+            int nextLine = processor.run.context.currentLine + 1;
+            TCommand nextCommand = processor.run.GetCommand(nextLine); 
+            int nextCountRun = processor.run.GetCountRun(nextLine);
+            if (nextCommand == TCommand.cPROCESSOR)
+            {                
+                GoingP_L.Text = "Выполнено: 0 из " + nextCountRun.ToString();
             }
-            else // если команда ПРОЦЕССОР отработала
-            {
-                GoingP_L.Text = "Выполнено: " + currentRUN +
-                                " из " + countRUN.ToString();                              
-                process.context.currentRun = 0; // обнуление текущего состояния 
-                process.context.countRun = 0;   // команды процесса                  
-                processor.run.descriptor.state = TStateProcess.spREADY; // отправление процесса в ГОТОВНОСТЬ                    
-                ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
-                ToLog(",  после выполнения команды  ", Color.White); ToLog("ПРОЦЕСОР-" + processor.run.context.countRun.ToString(), Color.Lime);
-                ToLog(",  перешел в ГОТОВНОСТЬ.", Color.White);
-                //listBox.ClearSelected();
-                //Label label = tabPage.Controls["State_L" + process.descriptor.PID] as Label;
-                //label.Text = "Состояние: " + processor.run.descriptor.state.GetDescription();
-                RefreshContext(); // загрузка нового контекста
-                ManagerOfProc();
-            }            
+            StateP_L.Text = "Состояние: " + processor.stateProcessor.GetDescription();
+            /* Рендер ПРОЦЕССА*/
+            Label label = tabPage.Controls["State_L" + processor.run.descriptor.PID] as Label;
+            ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
+            //listBox.ClearSelected();            
+            label.Text = "Состояние: " + processor.run.descriptor.state.GetDescription();
+            
+            
+
+            Processor_TC.Refresh();
+            groupBox4.Refresh();
+
         }
         #endregion
         #region Процессор
-        
+
         void RefreshContext()
         {
             int line = ++processor.run.context.currentLine;
@@ -306,54 +344,65 @@ namespace Task_1
             {
                 TimerOfProcessor.Stop();
                 ToLog(""); ToLog("Минимум 2 команды необходимо в загрузочном файле: ПАМЯТЬ, КОНЕЦ", Color.Red);
-            }
-            
+            }            
         }
-        /* ПРОЦЕССОР - обработчик текущего процесса за каждый тик*/
-        private void TimerOfProcessor_Tick(object sender, EventArgs e)
+        void RefreshReady()
+        {
+            QueueOfReady_LB.Items.Clear();
+            foreach (TProcess process in queueOfReady)
+            {
+                QueueOfReady_LB.Items.Add(process);
+            }
+        }        
+    /* ПРОЦЕССОР - обработчик текущего процесса за каждый тик*/
+    private void TimerOfProcessor_Tick(object sender, EventArgs e)
         {
             ++processor.countTick;
-            if (processor.stateProcessor == TStateProcessor.sprEMPTY)
+            if (processor.stateProcessor == TStateProcessor.sprBUSY) // процессор работает
             {
-                ManagerOfProc();         // инициализация текущего процесса                
-            }
-            else // если процессор занят работой
-            {
-                if (processor.run.descriptor.state == TStateProcess.spRUN)// обрабатываем процесс
+                if(processor.run.descriptor.state == TStateProcess.spRUN)// обрабатываем процесс
                 {
                     /*Обработчик команд текущего процесса*/
                     switch (processor.run.context.command)
                     {
                         case TCommand.cMEMORY:
-                            ToLog("Высвобождение ");
-                            ToLog(processor.run.descriptor.memory.ToString(), Color.Lime);
-                            ToLog(" для процесса ", Color.White);
-                            ToLog(processor.run.descriptor.name, Color.Lime);
-                            RefreshContext();
+                            RefreshContext();// переход на следующую команду
+                            MemoryTick(); // рендер команды ПАМЯТЬ после выхода из таймера
                             break;
-                        case TCommand.cPROCESSOR:
-                            Tick(processor.run); //ожидание события конца работы команды ПРОЦЕССОР
+                        case TCommand.cPROCESSOR:                            
+                            if ((int)processor.run.context.currentRun < (int)processor.run.context.countRun)     // выполнять, пока не истечет время команды ПРОЦЕССОР
+                            {// рендер каждого тика
+                                GoingP_L.Text = "Выполнено: " + ++processor.run.context.currentRun +
+                                                " из " + processor.run.context.countRun.ToString();                               
+                            }
+                            else // если команда ПРОЦЕССОР отработала
+                            {                                
+                                processor.run.context.currentRun = 0; // обнуление счетчика                                
+                                processor.run.descriptor.state = TStateProcess.spREADY; // пометка, для отправки процесса менеджером в ГОТОВНОСТЬ
+                                RefreshContext(); // переход на новую команду
+                                ManagerOfProc();  // отправка отработанного процесса в готовность
+                                ProcessorTick();  // отрисовка результат работы команды после выхода из таймера
+                            }
                             break;
                         case TCommand.cIO:
 
                             break;
                         case TCommand.cEND:
-                            GoingP_L.Text = "Выполнено: - " + " из -";
-                            ToLog(""); ToLog(processor.run.descriptor.name, Color.Lime);
-                            ToLog(" выполнился окончательно и был уничтожен.", Color.White);
-                            //listBox.ClearSelected();
-                            //listBox.SetSelected(processor.run.context.currentLine, true);                           
-                            StateP_L.Text = "Состояние: " + processor.stateProcessor.GetDescription();
                             processor.run = null;// удаление процесса
                             processor.stateProcessor = TStateProcessor.sprEMPTY;
+                            EndTick();
                             break;
                         default:
                             break;
                     }
                 }else
                 {
-                    ManagerOfProc();// отправка текущего процесса в ГОТОВНОСТЬ
-                }
+                    ManagerOfProc();// отправка текущего процесса в ВЫПОЛНЕНИЕ
+                }                 
+            }
+            else // если процессор свободен
+            {
+                ManagerOfProc();         // инициализация текущего процесса и процесс добавлен на ВЫПОЛНЕНИЕ              
             }            
         }
 
@@ -361,53 +410,36 @@ namespace Task_1
         /*Диспетчер процессов FIFO*/
         void ManagerOfProc()
         {
-            /* процесс С ГОТОВНОСТЬ на ВЫПОЛНЕНИЕ - когда процессор свободен */
-            if(processor.stateProcessor == TStateProcessor.sprEMPTY )
-            {
-                if(queueOfReady.Count > 0)
-                {                    
-                    processor.run = queueOfReady[0];    // инициализируем текущий
-                    queueOfReady.RemoveAt(0);           // процесс                           
-                    processor.stateProcessor = TStateProcessor.sprBUSY; // переключене процессора в рабочий режим
-                    processor.run.descriptor.state = TStateProcess.spRUN; // запуск процесса
-                    //Processor_TC.TabPages.Clear();
-                    //DrawPageProc(processor.run);        // отрисовка вкладки
-                    //TabPage tabPage = Processor_TC.Controls["TabPage" + processor.run.descriptor.PID] as TabPage;
-                    //Label label = tabPage.Controls["State_L" + processor.run.descriptor.PID] as Label;
-                    //ListBox listBox = tabPage.Controls["Process_LB" + processor.run.descriptor.PID] as ListBox;
-                    ToLog(""); ToLog(processor.run.ToString(), Color.Lime);
-                    ToLog(" добавлен в ВЫПОЛНЕНИЕ (квант=", Color.White);
-                    ToLog(processor.run.descriptor.kvant.ToString(), Color.Lime);
-                    ToLog(")", Color.White);                   
-                    //listBox.ClearSelected();
-                    //label.Text = processor.run.descriptor.state.GetDescription();
-                    //StateP_L.Text = "Состояние: " + processor.stateProcessor.GetDescription();
-                }
-                else
-                {
-                    TimerOfProcessor.Stop();
-                    ToLog(""); ToLog("Все процессы отработали", Color.Red);
-                }
-                    
-            }
-            else// ситуация работы процессора, ожидаемое событие - окончание работы команды процесса
+            
+            if(processor.stateProcessor == TStateProcessor.sprBUSY )
             {
                 /*Если пришел с ВЫПОЛНЕНИЕ, то отправляется в ГОТОВНОСТЬ по условию FIFO*/
-                if(processor.run.descriptor.state == TStateProcess.spREADY)
+                if (processor.run.descriptor.state == TStateProcess.spREADY)// ожидаемое событие - окончание работы команды процесса
                 {
                     List<TProcess> temp = new List<TProcess>();
                     temp.Add(processor.run);
                     temp.AddRange(queueOfReady);
                     queueOfReady.Clear();
                     queueOfReady = temp;
-                    QueueOfReady_LB.Items.Clear();
-                    foreach (TProcess process in queueOfReady)
-                    {
-                        QueueOfReady_LB.Items.Add(process);
-                    }
-                    processor.stateProcessor = TStateProcessor.sprEMPTY;
-                   
+                    RefreshReady();                
                 }
+            }
+            else/* процесс С ГОТОВНОСТЬ на ВЫПОЛНЕНИЕ - когда процессор свободен */
+            {
+                if (queueOfReady.Count > 0)
+                {
+                    processor.run = queueOfReady[0];    // инициализируем текущий
+                    queueOfReady.RemoveAt(0);           // процесс
+                    RefreshReady();                     // перерисовка ГОТОВНОСТЬ
+                    processor.stateProcessor = TStateProcessor.sprBUSY; // переключене процессора в рабочий режим
+                    processor.run.descriptor.state = TStateProcess.spRUN; // запуск процесса
+                    MoveToRun(); //рендер отправки процесса на ВЫПОЛНЕНИЕ
+                }
+                else
+                {
+                    TimerOfProcessor.Stop();
+                    ToLog(""); ToLog("Все процессы отработали", Color.Red);
+                }                
             }
         }
         
