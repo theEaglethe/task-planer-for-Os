@@ -59,13 +59,13 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.GoingP_L = new System.Windows.Forms.Label();
             this.StateP_L = new System.Windows.Forms.Label();
+            this.Processor_TC = new System.Windows.Forms.TabControl();
             this.button1 = new System.Windows.Forms.Button();
             this.TimerOfProcessor = new System.Windows.Forms.Timer(this.components);
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.TimerOfIO = new System.Windows.Forms.Timer(this.components);
             this.AddAll_B = new System.Windows.Forms.Button();
             this.Log = new System.Windows.Forms.RichTextBox();
-            this.Processor_TC = new System.Windows.Forms.TabControl();
             this.Main_TS.SuspendLayout();
             this.Load_GB.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -370,6 +370,14 @@
             this.StateP_L.TabIndex = 12;
             this.StateP_L.Text = "Состояние:";
             // 
+            // Processor_TC
+            // 
+            this.Processor_TC.Location = new System.Drawing.Point(0, 54);
+            this.Processor_TC.Name = "Processor_TC";
+            this.Processor_TC.SelectedIndex = 0;
+            this.Processor_TC.Size = new System.Drawing.Size(158, 209);
+            this.Processor_TC.TabIndex = 10;
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(311, 207);
@@ -413,6 +421,8 @@
             // 
             // Log
             // 
+            this.Log.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.Log.BackColor = System.Drawing.SystemColors.InfoText;
             this.Log.ForeColor = System.Drawing.SystemColors.Window;
             this.Log.Location = new System.Drawing.Point(12, 243);
@@ -420,14 +430,6 @@
             this.Log.Size = new System.Drawing.Size(374, 310);
             this.Log.TabIndex = 13;
             this.Log.Text = "";
-            // 
-            // Processor_TC
-            // 
-            this.Processor_TC.Location = new System.Drawing.Point(0, 54);
-            this.Processor_TC.Name = "Processor_TC";
-            this.Processor_TC.SelectedIndex = 0;
-            this.Processor_TC.Size = new System.Drawing.Size(158, 209);
-            this.Processor_TC.TabIndex = 10;
             // 
             // Main_F
             // 
@@ -444,6 +446,7 @@
             this.Controls.Add(this.Main_TS);
             this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(0, 610);
             this.Name = "Main_F";
             this.Text = "Планировщик процессов (модель)";
             this.Load += new System.EventHandler(this.Main_F_Load);
