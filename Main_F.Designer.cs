@@ -48,8 +48,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.IO_L = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.StateIO_L = new System.Windows.Forms.Label();
+            this.IO_TC = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -72,7 +72,7 @@
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.IO_TC.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -242,8 +242,8 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.IO_L);
-            this.groupBox5.Controls.Add(this.label4);
-            this.groupBox5.Controls.Add(this.tabControl1);
+            this.groupBox5.Controls.Add(this.StateIO_L);
+            this.groupBox5.Controls.Add(this.IO_TC);
             this.groupBox5.Location = new System.Drawing.Point(175, 19);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(163, 263);
@@ -260,23 +260,23 @@
             this.IO_L.TabIndex = 12;
             this.IO_L.Text = "Выполнено:";
             // 
-            // label4
+            // StateIO_L
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1, 16);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 13);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Состояние:";
+            this.StateIO_L.AutoSize = true;
+            this.StateIO_L.Location = new System.Drawing.Point(1, 16);
+            this.StateIO_L.Name = "StateIO_L";
+            this.StateIO_L.Size = new System.Drawing.Size(64, 13);
+            this.StateIO_L.TabIndex = 12;
+            this.StateIO_L.Text = "Состояние:";
             // 
-            // tabControl1
+            // IO_TC
             // 
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(0, 54);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(158, 209);
-            this.tabControl1.TabIndex = 10;
+            this.IO_TC.Controls.Add(this.tabPage2);
+            this.IO_TC.Location = new System.Drawing.Point(0, 54);
+            this.IO_TC.Name = "IO_TC";
+            this.IO_TC.SelectedIndex = 0;
+            this.IO_TC.Size = new System.Drawing.Size(158, 209);
+            this.IO_TC.TabIndex = 10;
             // 
             // tabPage2
             // 
@@ -460,7 +460,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
+            this.IO_TC.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -495,8 +495,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label IO_L;
-        private System.Windows.Forms.Label label4;
-        internal System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.Label StateIO_L;
+        internal System.Windows.Forms.TabControl IO_TC;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;

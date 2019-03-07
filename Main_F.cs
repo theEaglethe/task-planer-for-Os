@@ -18,8 +18,10 @@ namespace Task_1
         }       
         //TProcess currentProcess = null; // Текущий процесс (первый из ГОТОВНОСТЬ)
         List<TProcess> queueOfReady = new List<TProcess>();  // Главный список процессов  - ГОТОВНОСТЬ 
-        List<TProcess> queueOfWait = new List<TProcess>(); // Главный список процессов  - ОЖИДАНИЕ
-        TProcessor processor = new TProcessor();        
+        List<TProcess> queueOfWait = new List<TProcess>(); // Главный список процессов  - ОЖИДАНИЕ        
+        TProcessor processor = new TProcessor();
+        TIO inOut = new TIO();
+        
         #region Модуль загрузки файлов
 
         /*Меню загрузки файла*/
@@ -66,13 +68,16 @@ namespace Task_1
         /*Кнопка добавление файла в ГОТОВНОСТЬ*/
         private void AddToQueueOfReady_B_Click(object sender, EventArgs e)
         {
-            Log.Clear();
-            TBootFile selectFile = ReadyLoad_LB.SelectedItem as TBootFile;
-            //добавление процесса, выбранного в списке доступных, в очередь ГОТОВНОСТЬ
-            QueueOfReady_LB.Items.Add(selectFile);
-            if(TimerOfProcessor.Enabled != true)
+            if(TimerOfProcessor.Enabled == false)
             {
+                Log.Clear();
                 Go_B.Enabled = true;
+                TBootFile selectFile = ReadyLoad_LB.SelectedItem as TBootFile;
+                //добавление процесса, выбранного в списке доступных, в очередь ГОТОВНОСТЬ
+                QueueOfReady_LB.Items.Add(selectFile);
+            }else
+            {
+
             }
         }
         /*Добавить в список ГОТОВНОСТЬ все из списка Доступные файлы*/
@@ -80,18 +85,21 @@ namespace Task_1
         {
             Load_GB.Hide();
             ReadyLoad_LB.ClearSelected();
-            Log.Clear();
-            ToLog("Что бы удалить файл из списка ГОТОВНОСТЬ выберите его.", Color.DeepSkyBlue);
-            if (ReadyLoad_LB.Items.Count != 0)
-            {
-                QueueOfReady_LB.Items.AddRange(ReadyLoad_LB.Items);
-                Go_B.Enabled = true;
-            }
-            else
+            if (TimerOfProcessor.Enabled == false)
             {
                 Log.Clear();
-                ToLog("Список доступных файлов пуст. Загрузите хоть один файл, моделирующий процесс.", Color.Red);
+                ToLog("Что бы удалить файл из списка ГОТОВНОСТЬ выберите его.", Color.DeepSkyBlue);
+                if (ReadyLoad_LB.Items.Count != 0)
+                {
+                    QueueOfReady_LB.Items.AddRange(ReadyLoad_LB.Items);
+                    Go_B.Enabled = true;
+                }
+                else
+                {
+                    Log.Clear();
+                    ToLog("Список доступных файлов пуст. Загрузите хоть один файл, моделирующий процесс.", Color.Red);
 
+                }
             }
         }
         /*Кнопка удаления файла из списка доступных файлов*/
@@ -117,7 +125,7 @@ namespace Task_1
         /*События, при выборе файла в списке доступных файлов*/
         private void ReadyLoad_LB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Log.Clear();
+            
             FileShow_LB.Items.Clear();
             QueueOfReady_LB.ClearSelected();
             if (ReadyLoad_LB.SelectedIndex != -1)
@@ -128,8 +136,12 @@ namespace Task_1
                 {
                     FileShow_LB.Items.Add(comandfile);
                 }
-                ToLog("Нажмите Добавить, чтобы отправить выбранный файл в очередь ГОТОВНОСТЬ.\r\n", Color.DeepSkyBlue);
-                ToLog("       -- клик ПКМ по области описание файла, скрывает его.", Color.DeepSkyBlue);
+                if(TimerOfProcessor.Enabled == false)
+                {
+                    ToLog("Нажмите Добавить, чтобы отправить выбранный файл в очередь ГОТОВНОСТЬ.\r\n", Color.DeepSkyBlue);
+                    ToLog("       -- клик ПКМ по области описание файла, скрывает его.", Color.DeepSkyBlue);
+                    Log.Clear();
+                }
             }
         }
         /*События, при выборе файла в очерди ГОТОВНОСТЬ*/
@@ -230,6 +242,7 @@ namespace Task_1
             newTabPage.BackColor = SystemColors.Control;
             newTabPage.BorderStyle = BorderStyle.Fixed3D;
             newTabPage.ImeMode = ImeMode.NoControl;
+            newTabPage.Location = new Point(4, 22);
             newTabPage.Size = new Size(150, 180);
             Processor_TC.TabPages.Add(newTabPage);
             Label PID = new Label();
@@ -258,13 +271,42 @@ namespace Task_1
                 newTabPage.Controls.Add(MassComponnents[i]);
             }            
         }
-        /*Заполнение данными вкладки Процесс*/
-        void AddData()
+        void DrawPageIO(TProcess process)
         {
-            TProcess process = processor.run;
-            TabPage currentTabPage = Processor_TC.Controls["TabPage" + process.descriptor.PID] as TabPage;
-            Label currentPID = currentTabPage.Controls["PID_L" + process.descriptor.PID] as Label;
-             
+            TabPage newTabPage = new TabPage();
+            newTabPage.Name = "TabPageIO" + process.descriptor.PID;
+            newTabPage.Text = process.descriptor.name;
+            newTabPage.BackColor = SystemColors.Control;
+            newTabPage.BorderStyle = BorderStyle.Fixed3D;
+            newTabPage.ImeMode = ImeMode.NoControl;
+            Location = new Point(4, 22);
+            newTabPage.Size = new Size(150, 180);            
+            IO_TC.TabPages.Add(newTabPage);
+            Label PID = new Label();
+            PID.Name = "PIDio_L" + process.descriptor.PID;
+            PID.Text = "PIDio: " + process.descriptor.PID;
+            Label state = new Label();
+            state.Name = "StateIO_L" + process.descriptor.PID;
+            state.Text = "Состояние: " + process.descriptor.state.GetDescription();
+            Label kvant = new Label();
+            kvant.Name = "KvantIO_L" + process.descriptor.PID;
+            kvant.Text = "Квант: " + process.descriptor.kvant;
+            Label memory = new Label();
+            memory.Name = "MemoryIO_L" + process.descriptor.PID;
+            memory.Text = "Память: " + process.descriptor.memory;
+            ListBox IO_LB = new ListBox();
+            IO_LB.FormattingEnabled = true;
+            IO_LB.Name = "IO_LB" + process.descriptor.PID;
+            IO_LB.SelectionMode = SelectionMode.One;
+            IO_LB.Size = new Size(140, 108);
+            IO_LB.DataSource = process.strFileCommands;
+            Control[] MassComponnents = new Control[] { PID, state, kvant, memory, IO_LB };
+            for (var i = 0; i < MassComponnents.Length; i++)
+            {
+                MassComponnents[i].Location = new Point(3, 5 + (15 * i));
+                MassComponnents[i].AutoSize = true;
+                newTabPage.Controls.Add(MassComponnents[i]);
+            }
         }
         /* Рендер 1 тика процессора */
         void ProcessorTick()
@@ -319,9 +361,49 @@ namespace Task_1
             //Processor_TC.Refresh();
             //groupBox4.Refresh();
         }
-        #endregion
-        #region Процессор
+        void MoveToWait()
+        {
+            IO_TC.TabPages.Clear();
+            DrawPageIO(inOut.ioRun);        // отрисовка вкладки
+            IO_TC.Refresh();
+            TabPage tabPage = IO_TC.Controls["TabPageIO" + inOut.ioRun.descriptor.PID] as TabPage;
+            /* Рендер ЛОГА */
+            ToLog(""); ToLog(inOut.ioRun.ToString(), Color.Lime);
+            ToLog(" добавлен в ОЖИДАНИЕ (квант=", Color.White);
+            ToLog(inOut.ioRun.descriptor.kvant.ToString(), Color.Lime);
+            ToLog(")", Color.White);
+            StateIO_L.Text = "Состояние: " + inOut.stateIO.GetDescription();
+            /* Рендер ПРОЦЕССА*/
+            Label label = tabPage.Controls["StateIO_L" + inOut.ioRun.descriptor.PID] as Label;
+            ListBox listBox = tabPage.Controls["IO_LB" + inOut.ioRun.descriptor.PID] as ListBox;
+            label.Text = "Состояние: " + inOut.ioRun.descriptor.state.GetDescription();
+            //listBox.SetSelected(inOut.ioRun.context.currentLine, true);
 
+            Processor_TC.Refresh();
+            groupBox4.Refresh();
+        }
+        #endregion
+
+        #region Процессор
+        /* Создание процесса */
+        TProcess CreateProcess(TBootFile bootFile)
+        {
+            TProcess process = new TProcess();
+            /*Список команд загрузочного файла - кодовый сегмент*/
+            process.strFileCommands = bootFile.comandsOfFile;
+            /*Заполнение дескриптора процесса*/
+            process.descriptor.name = bootFile.nameOfFile;
+            process.descriptor.PIDcount();
+            process.descriptor.kvant = 1;
+            process.descriptor.state = TStateProcess.spREADY;
+            process.descriptor.memory = process.GetCountRun(0);
+            /*Настроить содержимое контекста нового процесса (инициализация начальными параметрами)*/
+            process.context.currentLine = 0;
+            process.context.command = TCommand.cMEMORY;
+            process.context.currentRun = 0;
+            process.context.countRun = process.GetCountRun(0);
+            return process;
+        }
         void RefreshContext()
         {
             int line = ++processor.run.context.currentLine;
@@ -377,7 +459,19 @@ namespace Task_1
                             }
                             break;
                         case TCommand.cIO:
+                            processor.run.descriptor.state = TStateProcess.spWAIT;
+                            queueOfWait.Add(processor.run);
+                            Processor_TC.TabPages.Clear();
+                            Processor_TC.Refresh();
+                            RefreshQueueOfWait();
+                            QueueOfWait_LB.Refresh();
+                            processor.run = null;
+                            processor.stateProcessor = TStateProcessor.sprEMPTY;
+                            if(queueOfWait.Count > 0)
+                            {
+                                TimerOfIO.Enabled = true;
 
+                            }
                             break;
                         case TCommand.cEND:
                             processor.stateProcessor = TStateProcessor.sprEMPTY;// процессор пуст, так как текущий процесс был удален
@@ -399,6 +493,52 @@ namespace Task_1
         }
 
         #endregion
+
+        #region Операция ВВОД/ВЫВОД
+
+        void RefreshQueueOfWait()
+        {
+            QueueOfWait_LB.Items.Clear();
+            foreach (TProcess process in queueOfWait)
+            {
+                QueueOfWait_LB.Items.Add(process);
+            }
+        }
+        /*Рендеринг IO*/
+        private void TimerOfIO_Tick(object sender, EventArgs e)
+        {
+            if(inOut.stateIO != TStateIO.sprEMPTY)
+            {
+                if(inOut.ioRun != null)
+                {
+                    if ((int)inOut.ioRun.context.currentRun < (int)inOut.ioRun.context.countRun)     // выполнять, пока не истечет время команды ПРОЦЕССОР
+                    {// рендер каждого тика
+                        IO_L.Text = "Выполнено: " + (inOut.ioRun.context.currentRun++) +
+                                        " из " + inOut.ioRun.context.countRun.ToString();
+                    }
+                    else // если команда ВВОД/ВЫВОД отработала
+                    {
+                        IO_L.Text = "Выполнено: " + (inOut.ioRun.context.currentRun++) +
+                                        " из " + inOut.ioRun.context.countRun.ToString();
+                        inOut.ioRun.descriptor.state = TStateProcess.spWAIT; // пометка, для отправки процесса менеджером в ГОТОВНОСТЬ
+                        List<TProcess> temp = new List<TProcess>();
+                        temp.Add(inOut.ioRun);
+                        inOut.ioRun = null;
+                        temp.AddRange(queueOfReady);
+                        queueOfReady.Clear();
+                        queueOfReady = temp;
+                        RefreshQueueOfWait(); // текущее состояние ГОТОВНОСТЬ 
+                    }
+                }               
+            }
+            else
+            {
+                ManagerOfIO();
+            }            
+        }
+        #endregion
+
+        #region Планирование процессов
         /*Диспетчер процессов FIFO*/
         void ManagerOfProc()
         {            
@@ -413,7 +553,7 @@ namespace Task_1
                     temp.AddRange(queueOfReady);
                     queueOfReady.Clear();
                     queueOfReady = temp;
-                    RefreshReady(); // текущее сстояние ГОТОВНОСТЬ
+                    RefreshReady(); // текущее состояние ГОТОВНОСТЬ
                     Processor_TC.TabPages.Clear(); //визуализация удаления процесса  - ПРОЦЕССОР                    
                     processor.stateProcessor = TStateProcessor.sprEMPTY; // процессор пуст, так в нем нет процесса
                     GoingP_L.Text = "Выполнено: - " + " из -";
@@ -432,61 +572,36 @@ namespace Task_1
                 }
                 else
                 {
-                    TimerOfProcessor.Stop();
-                    ToLog(""); ToLog("Все процессы отработали", Color.Red);
-                    Processor_TC.Controls.Clear();
+                    if (!TimerOfIO.Enabled)
+                    {
+                        TimerOfProcessor.Stop();
+                        ToLog(""); ToLog("Все процессы отработали", Color.Red);
+                        Processor_TC.Controls.Clear();
+                    }
                 }                
             }
         }
-        
-        /*Рендеринг IO*/
-        private void TimerOfIO_Tick(object sender, EventArgs e)
+        void ManagerOfIO()
         {
-            /*currentProcess.descriptor.state = TStateProcess.spWAIT;
-            int startRun = currentProcess.startRun;
-            int lineTime = currentProcess.currentLine;
-            int allTime = currentProcess.fileCommands[lineTime].countRun;
-            if (startRun <= allTime)
+            if (queueOfWait.Count > 0)
             {
-                IO_L.Text = "Выполнено: " + startRun++ + " из " + allTime.ToString();
-                currentProcess.startRun++;
+                inOut.ioRun = queueOfWait[0];
+                queueOfWait.RemoveAt(0);
+                RefreshQueueOfWait();
+                QueueOfWait_LB.Refresh();
+                inOut.stateIO = TStateIO.sprBUSY;
+                inOut.ioRun.descriptor.state = TStateProcess.spRUN;
+                MoveToWait();
             }
             else
             {
                 TimerOfIO.Stop();
-                currentProcess.currentLine++;
-                currentProcess.startRun = 0;
-                ModuleOfCommandManage(currentProcess);
-            }*/
+                ToLog(""); ToLog("Очередь ожидания пуста. ", Color.Orange);
+                IO_TC.Controls.Clear();
+            }
         }
-
-        /* Создание процесса */
-        TProcess CreateProcess(TBootFile bootFile)
-        {
-            TProcess process = new TProcess();
-            /*Список команд загрузочного файла - кодовый сегмент*/
-            process.strFileCommands = bootFile.comandsOfFile;
-            /*Заполнение дескриптора процесса*/
-            process.descriptor.name = bootFile.nameOfFile;            
-            process.descriptor.PIDcount();
-            process.descriptor.kvant = 1;
-            process.descriptor.state = TStateProcess.spREADY;            
-            process.descriptor.memory = process.GetCountRun(0);
-            /*Настроить содержимое контекста нового процесса (инициализация начальными параметрами)*/            
-            process.context.currentLine = 0;
-            process.context.command = TCommand.cMEMORY;
-            process.context.currentRun = 0;
-            process.context.countRun = process.GetCountRun(0);
-            return process;            
-        }
-
-        
-        
-        
-        
-
-
-
+        #endregion
+       
         #region Прочее
         /*Добавление в лог новой строки*/
         void ToLog(string output) //Функция добавления новых строк в лог
@@ -507,11 +622,7 @@ namespace Task_1
             Log.AppendText(output, color);            
         }
         #endregion
-
-        
     }
-    
-
     static class Extantion
     {
         public static void AppendText(this RichTextBox box, string text, Color color)
