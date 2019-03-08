@@ -48,14 +48,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.IO_L = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.IO_LB = new System.Windows.Forms.ListBox();
+            this.StateIO_L = new System.Windows.Forms.Label();
+            this.IO_TC = new System.Windows.Forms.TabControl();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.GoingP_L = new System.Windows.Forms.Label();
             this.StateP_L = new System.Windows.Forms.Label();
@@ -72,8 +66,6 @@
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
@@ -242,8 +234,8 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.IO_L);
-            this.groupBox5.Controls.Add(this.label4);
-            this.groupBox5.Controls.Add(this.tabControl1);
+            this.groupBox5.Controls.Add(this.StateIO_L);
+            this.groupBox5.Controls.Add(this.IO_TC);
             this.groupBox5.Location = new System.Drawing.Point(175, 19);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(163, 263);
@@ -260,85 +252,22 @@
             this.IO_L.TabIndex = 12;
             this.IO_L.Text = "Выполнено:";
             // 
-            // label4
+            // StateIO_L
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1, 16);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 13);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Состояние:";
+            this.StateIO_L.AutoSize = true;
+            this.StateIO_L.Location = new System.Drawing.Point(1, 16);
+            this.StateIO_L.Name = "StateIO_L";
+            this.StateIO_L.Size = new System.Drawing.Size(64, 13);
+            this.StateIO_L.TabIndex = 12;
+            this.StateIO_L.Text = "Состояние:";
             // 
-            // tabControl1
+            // IO_TC
             // 
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(0, 54);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(158, 209);
-            this.tabControl1.TabIndex = 10;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tabPage2.Controls.Add(this.label5);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.label7);
-            this.tabPage2.Controls.Add(this.label8);
-            this.tabPage2.Controls.Add(this.IO_LB);
-            this.tabPage2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(150, 183);
-            this.tabPage2.TabIndex = 0;
-            this.tabPage2.Text = "Процесс";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 7);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(28, 13);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "PID:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(2, 51);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(49, 13);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Память:";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 35);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(40, 13);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Квант:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 20);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(64, 13);
-            this.label8.TabIndex = 12;
-            this.label8.Text = "Состояние:";
-            // 
-            // IO_LB
-            // 
-            this.IO_LB.FormattingEnabled = true;
-            this.IO_LB.Location = new System.Drawing.Point(0, 69);
-            this.IO_LB.Name = "IO_LB";
-            this.IO_LB.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.IO_LB.Size = new System.Drawing.Size(140, 108);
-            this.IO_LB.TabIndex = 10;
+            this.IO_TC.Location = new System.Drawing.Point(0, 54);
+            this.IO_TC.Name = "IO_TC";
+            this.IO_TC.SelectedIndex = 0;
+            this.IO_TC.Size = new System.Drawing.Size(158, 209);
+            this.IO_TC.TabIndex = 10;
             // 
             // groupBox4
             // 
@@ -446,7 +375,7 @@
             this.Controls.Add(this.Main_TS);
             this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(0, 610);
+            this.MinimumSize = new System.Drawing.Size(16, 610);
             this.Name = "Main_F";
             this.Text = "Планировщик процессов (модель)";
             this.Load += new System.EventHandler(this.Main_F_Load);
@@ -460,9 +389,6 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -495,14 +421,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label IO_L;
-        private System.Windows.Forms.Label label4;
-        internal System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ListBox IO_LB;
+        private System.Windows.Forms.Label StateIO_L;
+        internal System.Windows.Forms.TabControl IO_TC;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Timer TimerOfIO;
         private System.Windows.Forms.Button AddAll_B;

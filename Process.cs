@@ -44,6 +44,12 @@ namespace Task_1
          **/
 
     #endregion
+    class TIO
+    {
+        public TProcess ioRun = null;
+        public TStateIO stateIO = TStateIO.sprEMPTY;
+        public int countTick = 0;
+    }
     class TProcessor
     {
         public TProcess run = null;
@@ -150,12 +156,17 @@ namespace Task_1
         cIO,            // ВВОД/ВЫВОД
         cEND            // КОНЕЦ
     }
-    /*
-     Состояние процессора
-         */
+    /* Состояние процессора */
     enum TStateProcessor : byte
     {
-
+        [Description("ЗАНЯТ")]
+        sprBUSY,        //Занят
+        [Description("СВОБОДЕН")]
+        sprEMPTY,       //Свободен        
+    }
+    /* Состояние процессора */
+    enum TStateIO : byte
+    {
         [Description("ЗАНЯТ")]
         sprBUSY,        //Занят
         [Description("СВОБОДЕН")]
@@ -174,3 +185,4 @@ namespace Task_1
         spWAIT          //Ожидание
     }    
 }
+
