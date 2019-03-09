@@ -54,8 +54,11 @@ namespace Task_1
                         ReadyLoad_LB.Items.Add(bootFile);
                     }
                 }
-                Log.Clear();
-                ToLog("Выберите любой файл и добавте его в список ГОТОВНОСТЬ", Color.DeepSkyBlue);
+                if (!TimerOfProcessor.Enabled)
+                {
+                    Log.Clear();
+                    ToLog("Выберите любой файл и добавте его в список ГОТОВНОСТЬ", Color.DeepSkyBlue);
+                }                
             }
         }
         /*Установка свойст при загрузке главной формы*/
@@ -77,7 +80,8 @@ namespace Task_1
                 QueueOfReady_LB.Items.Add(selectFile);
             }else
             {
-
+                TBootFile selectFile = ReadyLoad_LB.SelectedItem as TBootFile;
+                QueueOfReady_LB.Items.Add(selectFile);
             }
         }
         /*Добавить в список ГОТОВНОСТЬ все из списка Доступные файлы*/
@@ -147,11 +151,14 @@ namespace Task_1
         /*События, при выборе файла в очерди ГОТОВНОСТЬ*/
         private void QueueOfReady_LB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Log.Clear();
-            Load_GB.Hide();
-            ReadyLoad_LB.ClearSelected();
-            ToLog("Что бы удалить выбранный файл, выюерите его и кликните ПКМ по области ГОТОВНОСТЬ", Color.DeepSkyBlue);
-        }
+            if(TimerOfProcessor.Enabled == false)
+            {
+                Log.Clear();
+                Load_GB.Hide();
+                ReadyLoad_LB.ClearSelected();
+                ToLog("Что бы удалить выбранный файл, выюерите его и кликните ПКМ по области ГОТОВНОСТЬ", Color.DeepSkyBlue);
+            }
+        }            
         /*ПКМ - удалить файл из списка ГОТОВНОСТЬ*/
         private void QueueOfReady_LB_MouseUp(object sender, MouseEventArgs e)
         {
@@ -608,6 +615,7 @@ namespace Task_1
                         TimerOfProcessor.Stop();
                         ToLog(""); ToLog("Все процессы отработали", Color.Red);
                         Processor_TC.TabPages.Clear();
+                        Go_B.Enabled = true;
                     }
                 }                
             }
